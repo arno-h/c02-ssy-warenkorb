@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const checkAuth = require('./authenticate').checkAuth;
 
 router.post("/", calculateDiscount);
 
@@ -8,6 +9,11 @@ router.post("/", calculateDiscount);
  * 3. Stück und mehr: -15%
  */
 function calculateDiscount(request, response) {
+    if (!checkAuth(request.body.token)) {
+        response.status(403).end();
+        return;
+    }
+
     let products = request.body.cart;
 
     let discount = 0;

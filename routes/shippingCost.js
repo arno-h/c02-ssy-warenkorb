@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const checkAuth = require('./authenticate').checkAuth;
 
 router.post("/", calculateShippingCost);
 
@@ -10,6 +11,11 @@ router.post("/", calculateShippingCost);
  * >=5kg +5€
  */
 function calculateShippingCost(request, response) {
+    if (!checkAuth(request.body.token)) {
+        response.status(403).end();
+        return;
+    }
+
     let products = request.body.cart;
 
     let weight = 0;
