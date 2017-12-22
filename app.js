@@ -13,12 +13,14 @@ const index = require('./routes/index');
 const shippingCost = require('./routes/shippingCost');
 const discount = require('./routes/discount');
 const authenticate = require('./routes/authenticate').router;
+const routing = require('./routes/routing');
 
 // Routes
 app.use('/', index);
 app.use('/shippingCost', shippingCost);
 app.use('/discount', discount);
 app.use('/authenticate', authenticate);
+app.use('/routing', routing);
 
 
 module.exports = app;
