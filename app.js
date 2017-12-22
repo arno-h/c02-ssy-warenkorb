@@ -12,11 +12,13 @@ app.use(express.urlencoded({extended: false}));
 const index = require('./routes/index');
 const shippingCost = require('./routes/shippingCost');
 const discount = require('./routes/discount');
+const authenticate = require('./routes/authenticate').router;
 
 // Routes
 app.use('/', index);
 app.use('/shippingCost', shippingCost);
 app.use('/discount', discount);
+app.use('/authenticate', authenticate);
 
 
 module.exports = app;
