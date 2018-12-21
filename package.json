@@ -1,5 +1,5 @@
 {
-  "name": "demo2",
+  "name": "c02-ssy-warenkorb",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -8,16 +8,14 @@
     "calculateCart": "node ./client/calculateCart.js"
   },
   "dependencies": {
-    "body-parser": "~1.18.2",
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "express": "~4.15.5",
-    "hbs": "~4.0.1",
-    "lokijs": "~1.5.0",
-    "morgan": "~1.9.0",
-    "request": "^2.83.0"
+    "body-parser": "^1.18.3",
+    "debug": "^4.1.0",
+    "express": "^4.16.4",
+    "lokijs": "^1.5.5",
+    "morgan": "^1.9.1",
+    "request": "^2.88.0"
   },
   "devDependencies": {
-    "nodemon": "^1.13.1"
+    "nodemon": "^1.18.9"
   }
 }
