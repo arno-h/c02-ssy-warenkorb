@@ -11,9 +11,18 @@ let warenkorb = [
 ];
 
 async function calcDiscount() {
+    const authResponse = await axios.post(
+        'http://localhost:3000/authenticate/',
+        {username: 'Franz', password: 'password'}
+    );
+    securityToken = authResponse.data;
+
     const response = await axios.post(
         'http://localhost:3000/discount/',
-        {cart: warenkorb}
+        {
+            cart: warenkorb,
+            token: securityToken
+        }
     );
 
     const body = response.data;
@@ -23,7 +32,10 @@ async function calcDiscount() {
 
     const response2 = await axios.post(
         'http://localhost:3000/shippingCost/',
-        {cart: warenkorb}
+        {
+            cart: warenkorb,
+            token: securityToken
+        }
     );
     console.log("Versandkosten: " + response2.data);
 }
