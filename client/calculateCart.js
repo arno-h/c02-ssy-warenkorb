@@ -1,4 +1,4 @@
-const Request = require('request');
+const axios = require('axios');
 
 let securityToken = null;
 
