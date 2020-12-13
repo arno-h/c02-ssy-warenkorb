@@ -1,6 +1,17 @@
 # Warenkorb-Beispiel
 
-Ein einfaches Warenkorb-Service, das Berechnungen für den Warenkorb anstellt.
+Zwei Services (ohne Datenbank) werden für einen Warenkorb zur Verfügung
+gestellt: eines für Versandkosten (`shippingCost`) und eines für
+Rabatte (`discount`).
+
+Typisch für eine Microservice-Architektur werden diese beiden Services
+in einer Service-Registry angemeldet (`routing`), damit deren URL
+frei konfiguriert werden kann, ohne das Programm ändern zu müssen.
+
+Zudem ist der Zugriff auf die Services nur authentisierten Clients
+gestattet. Ein Login-Service (`authenticate`) übernimmt diesen Part
+und reicht einen Token weiter.
+
 
 ## Aufgaben
 
@@ -8,6 +19,9 @@ Hinweise:
  
 * generell lassen wir die Fehler-Behandlungen weg, es sei denn,
   es ist explizit in der Aufgabenstellung gefordert.
+* Datenbank ist keine notwendig, obwohl Sie - falls Sie wollen -
+  eine Datenbank für die Service-Registry bzw. für die Benutzer_innen
+  anlegen können.
 
 ### Warenkorb
 
@@ -51,10 +65,10 @@ let warenkorb = [
     * `discount` ... Berechneter Discount (obiger Warenkorb: € 7.965)
     * `final` ... Summe nachdem Discount abgezogen (obiger Warenkorb € 156.335)
 
-### Authentifizieren
+### Authentisieren
 
-Die beiden Services sollen die Berechnung nur noch für authorisierte NutzerInnen
-ermöglichen. Dazu wird ein eigenes Authentisierungs-Service erstellt:
+Die beiden Services sollen die Berechnung nur noch für authorisierte Nutzer_innen
+ermöglichen. Dazu wird ein eigenes Authentisierungsservice erstellt:
 
 * `POST /authenticate/` ... Dient dem Einloggen und retourniert einen Token. Einloggen
   ist erfolgreich, wenn als Passwort "password" angegeben wird (Benutzername egal).
@@ -65,8 +79,8 @@ ermöglichen. Dazu wird ein eigenes Authentisierungs-Service erstellt:
     * `username` ... Name des/der BenutzerIn
     * `until` ... Zeitstempel zu dem der Token abläuft: `Date.now() + 60000` (= 1 Minute)
 
-* Schreiben Sie zudem eine Funktionen welche einen Security-Token auf Gültigkeit prüft.
-  Der Einfachheit halber inkludieren Sie diese Funktion in die Service-Datei und
+* Schreiben Sie zudem eine Funktion welche einen Security-Token auf Gültigkeit prüft.
+  Der Einfachheit halber inkludieren Sie diese Funktion in dieselbe Datei und
   exportieren sie aus dem Modul, z.B. so:
   ```javascript
   module.exports = {
@@ -80,11 +94,12 @@ ermöglichen. Dazu wird ein eigenes Authentisierungs-Service erstellt:
   const checkAuth = require('./authenticate').checkAuth;
   ``` 
   ... und Sie können die Funktion `checkAuth(token)` verwenden.
+  Achtung: in `app.js` nun `require('routes/authenticate').router` verwenden
   
 * Bei den Services `POST /shippingCost/` und `POST /discount/` fordern Sie nun
   den zusätzlichen Parameter `token` im Request, den Sie auswerten. Ist der
   Token noch nicht abgelaufen, dann wie vorher berechnen und antworten, sonst
-  einfach `response.json(false)` ausgeben.
+  einfach HTTP-Statuscode 403 ohne Body mit `response.status(403).end()` retournieren.
 
 
 ### Routing
@@ -96,7 +111,7 @@ die korrekte URL des Services abfragen. D.h. unser Routing-Service hat folgende
 Endpunkte/Routen:
 
 * `GET /routing/` ... listet alle bekannten Routen auf
-* `GET /routing/discount` ... retourniert die URL für die Route als String 
+* `GET /routing/<serviceName>` ... retourniert die URL für das Service als String
 * `POST /routing/` ... legt eine neue Route an;
   Daten/Parameter:
     * `name` ... Name des Services
@@ -105,12 +120,12 @@ Endpunkte/Routen:
 **Tipps**:
 
 * Sie können entweder eine Datenbank-Tabelle anlegen oder (einfacher)
-die Routen einfach in einem Objekt speichern: das Objekt legen Sie mit
-`let services = {}` an und dann können Sie mit `services[var] = url`
-neue Einträge anlegen bzw. mit `services[var]` auslesen.
-* Registrieren Sie Ihre Services gleich zu Beginn des Service-Moduls
-  (außerhalb der Routen-Funktionen) mit einem `Request.post()`, bei dem
-  Sie der Einfachheit halber die Antwort ignorieren.
+  die Routen einfach in einem Objekt speichern: das Objekt legen Sie mit
+  `let services = {}` an und dann können Sie mit `services[var] = url`
+  neue Einträge anlegen bzw. mit `services[var]` auslesen.
+* Registrieren Sie Ihre Services gleich zu Beginn des Serverstarts.
+  Dazu gibt es die Funktion `init()` in der Datei `init.js` mit einem
+  `axios.post()`, bei dem Sie der Einfachheit halber die Antwort ignorieren.
 
   
 ### Client

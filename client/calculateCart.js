@@ -1,4 +1,5 @@
-const axios = require('axios');
+const Axios = require('axios');
+const axios = Axios.create({validateStatus: null});
 
 let securityToken = null;
 
