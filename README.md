@@ -80,6 +80,8 @@ ermöglichen. Dazu wird ein eigenes Authentisierungsservice erstellt:
     * `until` ... Zeitstempel zu dem der Token abläuft: `Date.now() + 60000` (= 1 Minute)
 
 * Schreiben Sie zudem eine Funktion welche einen Security-Token auf Gültigkeit prüft.
+  Es soll dabei nur überprüft werden, ob der Gültigkeitszeitraum (`until`) noch nicht
+  abgelaufen ist.
   Der Einfachheit halber inkludieren Sie diese Funktion in dieselbe Datei und
   exportieren sie aus dem Modul, z.B. so:
   ```javascript
@@ -97,7 +99,7 @@ ermöglichen. Dazu wird ein eigenes Authentisierungsservice erstellt:
   Achtung: in `app.js` nun `require('routes/authenticate').router` verwenden
   
 * Bei den Services `POST /shippingCost/` und `POST /discount/` fordern Sie nun
-  den zusätzlichen Parameter `token` im Request, den Sie auswerten. Ist der
+  den zusätzlichen Parameter `token` im Body des Requests, den Sie auswerten. Ist der
   Token noch nicht abgelaufen, dann wie vorher berechnen und antworten, sonst
   einfach HTTP-Statuscode 403 ohne Body mit `response.status(403).end()` retournieren.
 
